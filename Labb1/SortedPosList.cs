@@ -62,6 +62,27 @@ namespace Labb1
             return newSP;
         }
 
+        public static SortedPosList operator -(SortedPosList sp1, SortedPosList sp2)
+        {
+            int index1 = 0;
+            int index2 = 0;
+            SortedPosList list1 = sp1.Clone();
+            SortedPosList list2 = sp2.Clone();
+            while (index1 < list1.Count() && index2 < list2.Count())
+            {
+                if(list1[index1].Equals(list2[index2]))
+                {
+                    list1.Remove(list1[index1]);
+                }
+                else
+                {
+                    if (list1[index1].Length() >= list2[index2].Length()) index2++;
+                    else index1++;
+                }
+            }
+            return list1;
+        }
+
         public Position this[int index]
         {
             get { return positions[index]; }
@@ -81,7 +102,5 @@ namespace Labb1
                 Console.WriteLine($"[{i++}]\t" + p + $"\t {p.Length()}");
             }
         }
-
-
     }
 }

@@ -15,9 +15,31 @@ namespace Labb1
             Position p3 = new Position() { X = 5, Y = 4 };
             Position p4 = new Position() { X = 3, Y = 2 };
             Position p5 = new Position() { X = 3, Y = 3 };
-            Position p0 = new Position() { X = 2, Y = 2 };
+            Position p0 = new Position() { X = 0, Y = 0 };
 
             SortedPosList sortedList = new SortedPosList();
+            SortedPosList sortedList2 = new SortedPosList();
+
+            sortedList.Add(p1);
+            sortedList.Add(p2);
+            sortedList.Add(p3);
+            sortedList.Add(p4);
+
+            sortedList2.Add(p3);
+            sortedList2.Add(p4);
+            sortedList2.Add(p5);
+
+            sortedList.DisplayList();
+            sortedList2.DisplayList();
+
+            SortedPosList newList = sortedList - sortedList2;
+            newList.DisplayList();
+
+            SortedPosList newList2 = sortedList2 - sortedList;
+            newList2.DisplayList();
+
+
+            /*SortedPosList sortedList = new SortedPosList();
             SortedPosList sortedList2 = new SortedPosList();
             sortedList.Add(p1);
             sortedList.Add(p2);
@@ -38,7 +60,7 @@ namespace Labb1
             Console.WriteLine(sortedList[1]);
             Console.WriteLine(sortedList[2]);
 
-            /*Console.WriteLine(p3);
+            Console.WriteLine(p3);
             Console.WriteLine(p4);
             Position p6 = p2 + p1;
             Console.WriteLine(p6);
