@@ -17,8 +17,19 @@ namespace Labb1
             Position p5 = new Position() { X = 3, Y = 3 };
             Position p0 = new Position() { X = 0, Y = 0 };
 
-            SortedPosList sortedList = new SortedPosList();
-            SortedPosList sortedList2 = new SortedPosList();
+            SortedPosList sortedList = new SortedPosList("pos.txt");
+            sortedList.Add(p2);
+            sortedList.Add(p1);
+            sortedList.Add(p2);
+            sortedList.DisplayList();
+
+            /*SortedPosList noPathList = new SortedPosList();
+
+            noPathList.Add(p4);
+            noPathList.Add(p5);
+            noPathList.DisplayList();
+
+
 
             sortedList.Add(p1);
             sortedList.Add(p2);
@@ -39,7 +50,7 @@ namespace Labb1
             newList2.DisplayList();
 
 
-            /*SortedPosList sortedList = new SortedPosList();
+            SortedPosList sortedList = new SortedPosList();
             SortedPosList sortedList2 = new SortedPosList();
             sortedList.Add(p1);
             sortedList.Add(p2);

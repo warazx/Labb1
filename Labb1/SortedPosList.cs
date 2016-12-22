@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,15 @@ namespace Labb1
     public class SortedPosList
     {
         private List<Position> positions = new List<Position>();
+        private string filePath { get; set; }
+
+        public SortedPosList() { }
+
+        public SortedPosList(string filePath)
+        {
+            this.filePath = filePath;
+            Load(filePath);
+        }
 
         public int Count()
         {
@@ -21,6 +31,7 @@ namespace Labb1
             Position p = new Position { X = pos.X, Y = pos.Y };
             positions.Add(p);
             SortList();
+            if(filePath != null) Save();
         }
 
         public bool Remove(Position pos)
@@ -95,11 +106,72 @@ namespace Labb1
 
         public void DisplayList()
         {
-            Console.WriteLine($"The list contains {Count()} positions:");
+            if(filePath != null)
+            {
+                Console.WriteLine($"The list '{filePath}' contains {Count()} positions:");
+            }
+            else
+            {
+                Console.WriteLine($"The list contains {Count()} positions:");
+            }
+            
             int i = 0;
             foreach(Position p in positions)
             {
                 Console.WriteLine($"[{i++}]\t" + p + $"\t {p.Length()}");
+            }
+        }
+
+        private void Load(string filePath)
+        {
+            try
+            {
+                string[] lines = File.ReadAllLines(filePath);
+                foreach (string line in lines)
+                {
+                    int start1 = line.IndexOf('(') + 1;
+                    int end1 = line.IndexOf(',');
+                    int start2 = line.IndexOf(',') + 1;
+                    int end2 = line.IndexOf(')');
+
+                    int x = int.Parse(line.Substring(start1, end1 - start1));
+                    int y = int.Parse(line.Substring(start2, end2 - start2));
+                    Position pos = new Position { X = x, Y = y };
+                    Add(pos);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                this.filePath = filePath;
+                File.Create(filePath).Close();
+                Console.WriteLine($"No file found, created: {filePath}");
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine($"Error parsing: {filePath}");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Error reading: {filePath}");
+            }
+        }
+
+        private void Save()
+        {
+            string[] positionsAsStrings = new string[positions.Count()];
+            int index = 0;
+            foreach(Position p in positions)
+            {
+                positionsAsStrings[index++] = p.ToString();
+            }
+
+            try
+            {
+                File.WriteAllLines(filePath, positionsAsStrings);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Could not write to file: {filePath}");
             }
         }
     }
