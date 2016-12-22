@@ -8,33 +8,18 @@ namespace Labb1
 {
     public class Position
     {
+        private int x;
         public int X
         {
-            get
-            {
-                return X;
-            }
-            set
-            {
-                X = value >= 0 ? X : 0;
-            }
-        }
-        public int Y
-        {
-            get
-            {
-                return Y;
-            }
-            set
-            {
-                Y = value >= 0 ? Y : 0;
-            }
+            get { return x; }
+            set { x = value >= 0 ? value : 0; }
         }
 
-        public Position(int x, int y)
+        private int y;
+        public int Y
         {
-            X = x;
-            Y = y;
+            get { return y; }
+            set { y = value >= 0 ? value : 0; }
         }
 
         public double Length()
@@ -49,7 +34,7 @@ namespace Labb1
 
         public Position Clone()
         {
-            return new Position(this.X, this.Y);
+            return new Position { X = x, Y = y };
         }
 
         public static bool operator >(Position p1, Position p2)
@@ -78,17 +63,22 @@ namespace Labb1
 
         public static Position operator +(Position p1, Position p2)
         {
-            return new Position((p1.X + p2.X), p1.Y + p2.Y);
+            return new Position { X = (p1.X + p2.X), Y = (p1.Y + p2.Y)};
         }
 
         public static Position operator -(Position p1, Position p2)
         {
-            return new Position((p1.X - p2.X), p1.Y - p2.Y);
+            return new Position { X = (p1.X - p2.X), Y = (p1.Y - p2.Y) };
         }
 
         public static double operator %(Position p1, Position p2)
         {
             return Math.Sqrt(Math.Pow((p1.X - p2.X), 2) + Math.Pow((p1.Y - p2.Y), 2));
+        }
+
+        public override string ToString()
+        {
+            return $"({x},{y})";
         }
     }
 }
