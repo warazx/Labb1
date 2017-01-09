@@ -28,25 +28,21 @@ namespace Labb1
 
         public void Add(Position pos)
         {
-            Position p = new Position { X = pos.X, Y = pos.Y };
-            positions.Add(p);
+            positions.Add(pos);
             SortList();
             if(filePath != null) Save();
         }
 
         public bool Remove(Position pos)
         {
-            Position itemToRemove = positions.SingleOrDefault(p => p.Equals(pos));
-            return positions.Remove(itemToRemove);
+            return positions.RemoveAll(p => p.Equals(pos)) > 0;
         }
 
         public SortedPosList Clone()
         {
             SortedPosList newList = new SortedPosList();
-            foreach (Position p in positions)
-            {
-                newList.Add(p.Clone());
-            }            
+            foreach (Position p in positions) newList.Add(p.Clone());
+            newList.SortList();
             return newList;
         }
 
@@ -77,21 +73,21 @@ namespace Labb1
         {
             int index1 = 0;
             int index2 = 0;
-            SortedPosList list1 = sp1.Clone();
-            SortedPosList list2 = sp2.Clone();
-            while (index1 < list1.Count() && index2 < list2.Count())
+            SortedPosList baseList = sp1.Clone();
+            SortedPosList subList = sp2.Clone();
+            while (index1 < baseList.Count() && index2 < subList.Count())
             {
-                if(list1[index1].Equals(list2[index2]))
+                if(baseList[index1].Equals(subList[index2]))
                 {
-                    list1.Remove(list1[index1]);
+                    baseList.Remove(baseList[index1]);
                 }
                 else
                 {
-                    if (list1[index1].Length() >= list2[index2].Length()) index2++;
+                    if (baseList[index1].Length() >= subList[index2].Length()) index2++;
                     else index1++;
                 }
             }
-            return list1;
+            return baseList;
         }
 
         public Position this[int index]
@@ -136,7 +132,7 @@ namespace Labb1
 
                     int x = int.Parse(line.Substring(start1, end1 - start1));
                     int y = int.Parse(line.Substring(start2, end2 - start2));
-                    Position pos = new Position { X = x, Y = y };
+                    Position pos = new Position(x,y);
                     Add(pos);
                 }
             }
@@ -173,6 +169,11 @@ namespace Labb1
             {
                 Console.WriteLine($"Could not write to file: {filePath}");
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Join(", ", positions);
         }
     }
 }
