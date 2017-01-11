@@ -37,6 +37,7 @@ namespace Labb1
             list2.Add(new Position(2, 3));
             Console.WriteLine((list2 + list1) + "\n");
 
+            Console.WriteLine("--- VG TEST ---");
             //Lägger till en lista med punkter, CircleContent kollar vilka Positioner
             // som ligger inom cirkelns area.
             SortedPosList circleList = new SortedPosList();
@@ -60,11 +61,12 @@ namespace Labb1
 
             //Skapar en ny lista från filen som skickas med som argument,
             // finns inte namnet skapas en ny fil med det namnet.
-            SortedPosList listFromFile = new SortedPosList("rr.txt");
-            Console.WriteLine("Imported from file: " + listFromFile);
+            SortedPosList listFromFile1 = new SortedPosList("nyk.txt");
+            Console.WriteLine("Imported from file: " + listFromFile1);
 
             //Lägger till en Position till listan, filen uppdateras automatiskt för varje aaddition.
-            listFromFile.Add(new Position(6, 3));
+            listFromFile1.Add(new Position(6, 3));
+            Console.WriteLine("Added " + listFromFile1 + " to list.");
 
             Console.ReadLine();
         }
