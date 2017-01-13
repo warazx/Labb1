@@ -1,41 +1,43 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Labb1
 {
-    public class SortedPosList
+    public class SortedPosList : IEnumerable<Position>
     {
-        private List<Position> _positions = new List<Position>();
-        private string _filePath { get; set; }
+        private List<Position> positions = new List<Position>();
+        private string filePath { get; set; }
 
         public SortedPosList() { }
 
         public SortedPosList(string filePath)
         {
-            _filePath = filePath;
+            this.filePath = filePath;
             Load(filePath);
         }
 
         public int Count()
         {
-            return _positions.Count();
+            return positions.Count();
         }
 
         public void Add(Position p)
         {
-            _positions.Add(p);
+            positions.Add(p);
             SortList();
-            if(_filePath != null) Save();
+            if(filePath != null) Save();
         }
 
         public bool Remove(Position p)
         {
-            int positionsRemoved = _positions.RemoveAll(pos => pos.Equals(p));
+            int positionsRemoved = positions.RemoveAll(pos => pos.Equals(p));
             if(positionsRemoved > 0)
             {
-                if(_filePath != null) Save();
+                if(filePath != null) Save();
                 return true;
             }
             else
@@ -47,7 +49,7 @@ namespace Labb1
         public SortedPosList Clone()
         {
             SortedPosList newList = new SortedPosList();
-            foreach (Position p in _positions)
+            foreach (Position p in positions)
             {
                 newList.Add(p.Clone());
             }
@@ -58,12 +60,13 @@ namespace Labb1
         public SortedPosList CircleContent(Position centerPosition, double radius)
         {
             SortedPosList newList = new SortedPosList();
-            foreach(Position p in _positions)
+            
+            IEnumerable<Position> posInCircle = positions.Where(p => 
+                (Math.Pow(p.X - centerPosition.X, 2) + (Math.Pow(p.Y - centerPosition.Y, 2))) < Math.Pow(radius, 2));
+
+            foreach(Position p in posInCircle)
             {
-                if ((Math.Pow(p.X - centerPosition.X, 2) + (Math.Pow(p.Y - centerPosition.Y, 2))) < Math.Pow(radius, 2))
-                {
-                    newList.Add(p.Clone());
-                }
+                newList.Add(p.Clone());
             }
             return newList;
         }
@@ -71,7 +74,7 @@ namespace Labb1
         public static SortedPosList operator +(SortedPosList sp1, SortedPosList sp2)
         {
             SortedPosList newSortedPosList = sp1.Clone();
-            foreach(Position p in sp2._positions)
+            foreach(Position p in sp2.positions)
             {
                 newSortedPosList.Add(p.Clone());
             }
@@ -80,40 +83,32 @@ namespace Labb1
 
         public static SortedPosList operator -(SortedPosList sp1, SortedPosList sp2)
         {
-            int baseIndex = 0;
-            int subIndex = 0;
+            IEnumerable<Position> posToRemove = sp1.Where(p1 => sp2.Any(p2 => p2.Equals(p1)));
+
             SortedPosList baseList = sp1.Clone();
-            SortedPosList subList = sp2;
-            while (baseIndex < baseList.Count() && subIndex < subList.Count())
+            foreach(Position p in posToRemove)
             {
-                if(baseList[baseIndex].Equals(subList[subIndex]))
-                {
-                    baseList.Remove(baseList[baseIndex]);
-                }
-                else
-                {
-                    if (baseList[baseIndex].Length() >= subList[subIndex].Length()) subIndex++;
-                    else baseIndex++;
-                }
+                baseList.Remove(p);
             }
+            
             return baseList;
         }
 
         public Position this[int index]
         {
-            get { return _positions[index]; }
+            get { return positions[index]; }
         }
 
         public override string ToString()
         {
-            return string.Join(", ", _positions);
+            return string.Join(", ", positions);
         }
         
         public void DisplayList()
         {
-            if(_filePath != null)
+            if(filePath != null)
             {
-                Console.WriteLine($"The list '{_filePath}' contains {Count()} positions:");
+                Console.WriteLine($"The list '{filePath}' contains {Count()} positions:");
             }
             else
             {
@@ -121,7 +116,7 @@ namespace Labb1
             }
             
             int i = 0;
-            foreach(Position p in _positions)
+            foreach(Position p in positions)
             {
                 Console.WriteLine($"[{i++}]\t" + p + $"\t {p.Length()}");
             }
@@ -129,7 +124,7 @@ namespace Labb1
 
         private void SortList()
         {
-            _positions.Sort((emp1, emp2) => emp1.Length().CompareTo(emp2.Length()));
+            positions.Sort((emp1, emp2) => emp1.Length().CompareTo(emp2.Length()));
         }
 
         private void Load(string filePath)
@@ -139,20 +134,19 @@ namespace Labb1
                 string[] lines = File.ReadAllLines(filePath);
                 foreach (string line in lines)
                 {
-                    int startX = line.IndexOf('(') + 1;
-                    int endX = line.IndexOf(',');
-                    int startY = line.IndexOf(',') + 1;
-                    int endY = line.IndexOf(')');
+                    string[] xy = line.Split(',');
+                    xy[0] = Regex.Replace(xy[0], "[^0-9.]", "");
+                    xy[1] = Regex.Replace(xy[1], "[^0-9.]", "");
 
-                    int x = int.Parse(line.Substring(startX, endX - startX));
-                    int y = int.Parse(line.Substring(startY, endY - startY));
+                    int x = int.Parse(xy[0]);
+                    int y = int.Parse(xy[1]);
                     Position position = new Position(x,y);
                     Add(position);
                 }
             }
             catch (FileNotFoundException)
             {
-                this._filePath = filePath;
+                this.filePath = filePath;
                 File.Create(filePath).Close();
                 Console.WriteLine($"No file found, created: {filePath}");
             }
@@ -168,21 +162,31 @@ namespace Labb1
 
         private void Save()
         {
-            string[] positionsAsStrings = new string[_positions.Count()];
+            string[] positionsAsStrings = new string[positions.Count()];
             int index = 0;
-            foreach(Position p in _positions)
+            foreach(Position p in positions)
             {
                 positionsAsStrings[index++] = p.ToString();
             }
 
             try
             {
-                File.WriteAllLines(_filePath, positionsAsStrings);
+                File.WriteAllLines(filePath, positionsAsStrings);
             }
             catch (Exception)
             {
-                Console.WriteLine($"Could not write to file: {_filePath}");
+                Console.WriteLine($"Could not write to file: {filePath}");
             }
+        }
+
+        public IEnumerator<Position> GetEnumerator()
+        {
+            return positions.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

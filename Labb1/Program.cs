@@ -57,16 +57,17 @@ namespace Labb1
             list4.Add(new Position(3, 7));  //dup
             list4.Add(new Position(2, 1));  //finns ej
             list4.Add(new Position(4, 2));  //dup
-            Console.WriteLine(list3 - list4);
+            Console.WriteLine(list3 + " - " + list4);
+            Console.WriteLine("list - list: " + (list3 - list4));
 
             //Skapar en ny lista från filen som skickas med som argument,
             // finns inte namnet skapas en ny fil med det namnet.
-            SortedPosList listFromFile1 = new SortedPosList("nyk.txt");
+            SortedPosList listFromFile1 = new SortedPosList("testaren.txt");
             Console.WriteLine("Imported from file: " + listFromFile1);
 
             //Lägger till en Position till listan, filen uppdateras automatiskt för varje aaddition.
             listFromFile1.Add(new Position(6, 3));
-            Console.WriteLine("Added " + listFromFile1 + " to list.");
+            Console.WriteLine(listFromFile1);
 
             Console.ReadLine();
         }
