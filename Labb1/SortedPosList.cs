@@ -84,13 +84,8 @@ namespace Labb1
         public static SortedPosList operator -(SortedPosList sp1, SortedPosList sp2)
         {
             IEnumerable<Position> posToRemove = sp1.Where(p1 => sp2.Any(p2 => p2.Equals(p1)));
-
             SortedPosList baseList = sp1.Clone();
-            foreach(Position p in posToRemove)
-            {
-                baseList.Remove(p);
-            }
-            
+            foreach(Position p in posToRemove) baseList.Remove(p);
             return baseList;
         }
 
